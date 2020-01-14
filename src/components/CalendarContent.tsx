@@ -1,68 +1,101 @@
+import ButtonBase from "@material-ui/core/ButtonBase";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  format,
-  startOfWeek,
-  startOfMonth,
-  endOfMonth,
-  endOfWeek,
-  addDays,
-  startOfToday,
-  getDay
-} from "date-fns/esm";
-import React, { FC, useEffect } from "react";
-import ButtonBase from "@material-ui/core/ButtonBase";
+import Typography from "@material-ui/core/Typography";
 import { getDaysInMonth } from "date-fns";
+import { getDay, startOfMonth, startOfToday } from "date-fns/esm";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 
 interface CalendarContentProps {
   currentDate: Date;
 }
 const useStyles = makeStyles(theme => ({
   root: {},
-
-  day: {
-    width: "50px",
-    height: "50px",
-    display: "inline-block"
+  cell: {
+    [theme.breakpoints.up("xs")]: {
+      display: "flex",
+      width: "5rem",
+      height: "5rem",
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    [theme.breakpoints.down("xs")]: {
+      display: "block",
+      width: "100%"
+    }
   },
+
   header: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
-  item: {
-    [theme.breakpoints.down("xs")]: {
+  row: {
+    [theme.breakpoints.down("sm")]: {
       display: "block"
     },
-    [theme.breakpoints.up("xs")]: {
+    [theme.breakpoints.up("sm")]: {
       display: "flex",
       flexFlow: "row",
-
       padding: theme.spacing(1)
     }
-  },
-  today: {
-    color: "red",
-    "& :after, & :before": {
-      content: "",
-      position: "absolute"
-    },
-    "& :after": {
-      borderRadius: "50%",
-      backgroundColor: "pink"
-    }
-  },
-  row: {
-    display: "flex"
   }
 }));
 const CalendarContent: FC<CalendarContentProps> = props => {
-  const { currentDate } = props;
   const classes = useStyles();
-  //   console.log(startOfWeek(currentDate, { weekStartsOn: 1 }));
-  //   console.log(getDay(startOfMonth(currentDate)) - 1);
-  //   console.log(getWeeksInMonth(currentDate, { weekStartsOn: 1 }));
+
+  const { currentDate } = props;
+  const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(currentDate));
+
+  const setAllDays = () => {
+    let blanks = [];
+    let days = [];
+    const startedDay = getDay(startOfMonth(startOfToday()));
+    for (let counter = 1; counter < startedDay; counter++) {
+      blanks.push(<div className={classes.cell}></div>);
+    }
+    for (let counter = 1; counter <= daysInMonth; counter++) {
+      days.push(
+        <div key={counter}>
+          {" "}
+          <ButtonBase className={classes.cell}>
+            <Typography variant="body2">{counter}</Typography>
+          </ButtonBase>
+        </div>
+      );
+    }
+    return [...blanks, ...days];
+  };
+
+  const setRows = () => {
+    let rows: ReactNode[] = [];
+    let cells: ReactNode[] = [];
+
+    setAllDays().forEach((row, index) => {
+      if (index % 7 !== 0) {
+        cells.push(row);
+      } else {
+        rows.push(cells);
+        cells = [];
+        cells.push(row);
+      }
+      if (index === setAllDays().length - 1) {
+        rows.push(cells);
+      }
+    });
+    return rows.map((day, index) => (
+      <div className={classes.row} key={index}>
+        {day}
+      </div>
+    ));
+  };
+
+  useEffect(() => {
+    setDaysInMonth(getDaysInMonth(currentDate));
+    setAllDays();
+    setRows();
+  }, [currentDate, setAllDays, setRows]);
 
   const renderWeek = () => {
     //format(currentDate, "ddd") is not working
@@ -70,62 +103,21 @@ const CalendarContent: FC<CalendarContentProps> = props => {
     const days = [];
     for (let counter = 0; counter < 7; counter++) {
       days.push(
-        <div className={classes.day}>
-          <ButtonBase>{daysOfWeek[counter]}</ButtonBase>
+        <div>
+          <ButtonBase className={classes.cell}>
+            <Typography variant="body2">{daysOfWeek[counter]}</Typography>
+          </ButtonBase>
         </div>
       );
     }
     return days;
   };
 
-  const getFirstDayOfMonth = () => {
-    return getDay(startOfMonth(startOfToday()));
-  };
-
-  const getBlankDays = () => {
-    let blanks = [];
-    for (let counter = 1; counter < getFirstDayOfMonth(); counter++) {
-      blanks.push(<div className={classes.day}></div>);
-    }
-    return blanks;
-  };
-
-  const displayDates = () => {
-    let days = [];
-    for (let counter = 1; counter <= getDaysInMonth(currentDate); counter++) {
-      days.push(
-        <div className={classes.day} key={counter}>
-          {counter}
-        </div>
-      );
-    }
-    return [...getBlankDays(), ...days];
-  };
-
-  let rows: any[] = [];
-  let cells: any[] = [];
-
-  displayDates().forEach((row, i) => {
-    if (i % 7 !== 0) {
-      cells.push(row);
-    } else {
-      rows.push(cells);
-      cells = [];
-      cells.push(row);
-    }
-    if (i === displayDates().length - 1) {
-      rows.push(cells);
-    }
-  });
-
-  let daysinmonth = rows.map((d, i) => {
-    return <div>{d}</div>;
-  });
-
   return (
     <Paper variant="outlined" square>
-      {renderWeek()}
-      {daysinmonth}
+      <div className={classes.row}>{renderWeek()}</div>
+      {setRows()}
+
       {/* {[...Array(getDaysInMonth(currentDate))].map((_, index) => (
         <div key={index}>
           <ButtonBase

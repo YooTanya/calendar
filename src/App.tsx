@@ -19,7 +19,14 @@ import React, { FC, useEffect, useState } from "react";
 import CalendarContent from "./components/CalendarContent";
 
 const useStyles = makeStyles(theme => ({
-  root: {},
+  calendar: {
+    display: "inline-flex",
+    flexFlow: "column",
+    width: "auto",
+    [theme.breakpoints.down("xs")]: {
+      width: "100%"
+    }
+  },
   header: {
     display: "flex",
     flexDirection: "row",
@@ -59,7 +66,7 @@ const App: FC = () => {
   }, [displayIcons]);
 
   return (
-    <div>
+    <div className={classes.calendar}>
       <AppBar className={classes.header} position="static">
         <IconButton
           disabled={disabledPrevIcon}
