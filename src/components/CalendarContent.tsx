@@ -71,19 +71,18 @@ const CalendarContent: FC<CalendarContentProps> = props => {
   const setRows = () => {
     let rows: ReactNode[] = [];
     let cells: ReactNode[] = [];
-
     setAllDays().forEach((row, index) => {
-      if (index % 7 !== 0) {
-        cells.push(row);
+      if (index % 7 == 0) {
+        if (cells.length > 0) {
+          rows.push(cells);
+          cells = [];
+          cells.push(row);
+        }
       } else {
-        rows.push(cells);
-        cells = [];
         cells.push(row);
-      }
-      if (index === setAllDays().length - 1) {
-        rows.push(cells);
       }
     });
+    rows.push(cells);
     return rows.map((day, index) => (
       <div className={classes.row} key={index}>
         {day}
