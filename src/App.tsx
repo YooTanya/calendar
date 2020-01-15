@@ -15,26 +15,15 @@ import {
   subMonths
 } from "date-fns/esm";
 import startOfToday from "date-fns/esm/startOfToday";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import CalendarContent from "./components/CalendarContent";
 
 const useStyles = makeStyles(theme => ({
-  calendar: {
-    display: "inline-flex",
-    flexFlow: "column",
-    width: "auto",
-    [theme.breakpoints.down("xs")]: {
-      width: "100%"
-    }
-  },
   header: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
-  },
-  today: {
-    color: "red"
   }
 }));
 const App: FC = () => {
@@ -43,7 +32,7 @@ const App: FC = () => {
   const [disabledNextIcon, setDisabledNextIcon] = useState(false);
   const [currentDate, setCurrentDate] = useState(startOfToday());
 
-  const displayIcons = () => {
+  const displayIcons = useCallback(() => {
     const firstMonth = startOfYear(startOfToday()).getMonth();
     const lastMonth = endOfYear(startOfToday()).getMonth();
     const currentMonth = getMonth(currentDate);
@@ -59,20 +48,19 @@ const App: FC = () => {
         setDisabledPrevIcon(false);
         setDisabledNextIcon(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     displayIcons();
   }, [displayIcons]);
 
   return (
-    <div className={classes.calendar}>
+    <div>
       <AppBar className={classes.header} position="static">
         <IconButton
           disabled={disabledPrevIcon}
           onClick={() => {
             setCurrentDate(subMonths(currentDate, 1));
-            displayIcons();
           }}
         >
           <KeyboardArrowLeftIcon fontSize="small" />
@@ -84,7 +72,6 @@ const App: FC = () => {
           disabled={disabledNextIcon}
           onClick={() => {
             setCurrentDate(addMonths(currentDate, 1));
-            displayIcons();
           }}
         >
           <KeyboardArrowRightIcon fontSize="small" />
