@@ -3,8 +3,9 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { getDaysInMonth } from "date-fns";
-import { getDay, startOfMonth, startOfToday } from "date-fns/esm";
+import { getDay, startOfMonth } from "date-fns/esm";
 import React, { FC, ReactNode, useEffect, useState } from "react";
+import clsx from "clsx";
 
 interface CalendarContentProps {
   currentDate: Date;
@@ -24,7 +25,11 @@ const useStyles = makeStyles(theme => ({
       width: "100%"
     }
   },
-
+  cellBlank: {
+    [theme.breakpoints.down("xs")]: {
+      display: "none"
+    }
+  },
   header: {
     display: "flex",
     flexDirection: "row",
@@ -54,7 +59,9 @@ const CalendarContent: FC<CalendarContentProps> = props => {
     const startedDay = getDay(startOfMonth(currentDate));
 
     for (let counter = 1; counter < startedDay; counter++) {
-      blanks.push(<div className={classes.cell}></div>);
+      blanks.push(
+        <div className={clsx(classes.cell, classes.cellBlank)}></div>
+      );
     }
     for (let counter = 1; counter <= daysInMonth; counter++) {
       days.push(
