@@ -48,7 +48,7 @@ const App: FC = () => {
         setDisabledPrevIcon(false);
         setDisabledNextIcon(false);
     }
-  }, []);
+  }, [currentDate]);
 
   useEffect(() => {
     displayIcons();
