@@ -51,7 +51,8 @@ const CalendarContent: FC<CalendarContentProps> = props => {
   const setAllDays = () => {
     let blanks = [];
     let days = [];
-    const startedDay = getDay(startOfMonth(startOfToday()));
+    const startedDay = getDay(startOfMonth(currentDate));
+
     for (let counter = 1; counter < startedDay; counter++) {
       blanks.push(<div className={classes.cell}></div>);
     }
@@ -101,7 +102,7 @@ const CalendarContent: FC<CalendarContentProps> = props => {
     for (let counter = 0; counter < 7; counter++) {
       days.push(
         <div>
-          <ButtonBase className={classes.cell}>
+          <ButtonBase disableRipple className={classes.cell}>
             <Typography variant="body2">{daysOfWeek[counter]}</Typography>
           </ButtonBase>
         </div>
