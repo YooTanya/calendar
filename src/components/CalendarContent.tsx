@@ -72,12 +72,10 @@ const CalendarContent: FC<CalendarContentProps> = props => {
     let rows: ReactNode[] = [];
     let cells: ReactNode[] = [];
     setAllDays().forEach((row, index) => {
-      if (index % 7 == 0) {
-        if (cells.length > 0) {
-          rows.push(cells);
-          cells = [];
-          cells.push(row);
-        }
+      if (index % 7 == 0 && cells.length > 0) {
+        rows.push(cells);
+        cells = [];
+        cells.push(row);
       } else {
         cells.push(row);
       }
