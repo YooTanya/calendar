@@ -5,8 +5,9 @@ import Typography from "@material-ui/core/Typography";
 import clsx from "clsx";
 import { format } from "date-fns/esm";
 import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
-import CalendarDialog from "./CalendarDialog";
 import CalendarDay from "../types/CalendarDay";
+import CalendarDialog from "./CalendarDialog";
+import Tooltip from "@material-ui/core/Tooltip";
 
 interface CalendarContentProps {
   currentDate: Date;
@@ -31,7 +32,8 @@ const useStyles = makeStyles(theme => ({
     },
     [theme.breakpoints.down("xs")]: {
       display: "flex",
-      width: "100%"
+      width: "100%",
+      height: "3rem"
     }
   },
   cellBlank: {
@@ -88,6 +90,13 @@ const useStyles = makeStyles(theme => ({
       display: "flex",
       flexFlow: "row"
     }
+  },
+  tooltip: {
+    padding: theme.spacing(1),
+    fontSize: theme.typography.body2.fontSize,
+    [theme.breakpoints.down("xs")]: {
+      display: "none"
+    }
   }
 }));
 
@@ -135,6 +144,7 @@ const CalendarContent: FC<CalendarContentProps> = props => {
   const createDayElement = useCallback(() => {
     return dates.map(values => {
       const { id, date, description } = values;
+
       return (
         <div
           key={id}
@@ -147,16 +157,26 @@ const CalendarContent: FC<CalendarContentProps> = props => {
           )}
           onClick={() => handleOpenDialog(currentDate, date, description)}
         >
-          <ButtonBase disabled={date === undefined} className={classes.button}>
-            <Typography variant="body2">
-              {!!date && format(date, "d")}
-            </Typography>
-            {description && (
-              <Typography variant="body2" className={classes.description}>
-                {description}
+          <Tooltip
+            title={description}
+            placement="right"
+            classes={{ tooltip: classes.tooltip }}
+          >
+            <ButtonBase
+              disabled={date === undefined}
+              className={classes.button}
+            >
+              <Typography variant="body2">
+                {!!date && format(date, "d")}
               </Typography>
-            )}
-          </ButtonBase>
+
+              {description && (
+                <Typography variant="body2" className={classes.description}>
+                  {description}
+                </Typography>
+              )}
+            </ButtonBase>
+          </Tooltip>
         </div>
       );
     });

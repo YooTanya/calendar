@@ -9,14 +9,14 @@ import {
   addMonths,
   endOfYear,
   format,
-  getMonth,
-  getYear,
-  startOfYear,
-  subMonths,
-  startOfMonth,
   getDay,
   getDaysInMonth,
-  setDate
+  getMonth,
+  getYear,
+  setDate,
+  startOfMonth,
+  startOfYear,
+  subMonths
 } from "date-fns/esm";
 import startOfToday from "date-fns/esm/startOfToday";
 import React, { FC, useCallback, useEffect, useState } from "react";
@@ -75,12 +75,6 @@ const App: FC = () => {
 
     for (let counter = 1; counter <= daysInMonth; counter++) {
       let description = "";
-      if (counter === 25 || counter === 26 || counter === 27) {
-        description = "Chinese new year";
-      }
-      if (counter === 1 || counter === 31) {
-        description = "New year";
-      }
       values.push({
         id: counter,
         date: setDate(currentDate, counter),
