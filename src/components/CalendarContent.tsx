@@ -35,7 +35,8 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down("xs")]: {
       display: "flex",
       width: "100%",
-      height: "3rem"
+      height: "3rem",
+      borderBottom: `1px solid ${theme.palette.divider}`
     }
   },
   cellBlank: {
@@ -122,7 +123,7 @@ const CalendarContent: FC<CalendarContentProps> = props => {
     }
   }, []);
 
-  const handleCloseDialog = () => {
+  const handleCloseDialog = (): void => {
     setIsOpenDialog(false);
   };
 
@@ -237,7 +238,7 @@ const CalendarContent: FC<CalendarContentProps> = props => {
 
   return (
     <>
-      <Paper variant="outlined">
+      <Paper square>
         <div className={classes.row}>{renderWeek()}</div>
         {arrangeDays()}
       </Paper>

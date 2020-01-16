@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between"
   }
 }));
-const App: FC = props => {
+const App: FC = () => {
   const classes = useStyles();
   const [disabledPrevIcon, setDisabledPrevIcon] = useState(false);
   const [disabledNextIcon, setDisabledNextIcon] = useState(false);
