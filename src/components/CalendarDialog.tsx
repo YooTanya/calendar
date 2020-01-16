@@ -6,7 +6,11 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import { format } from "date-fns";
 import React, { ChangeEventHandler, FC, useState } from "react";
-
+interface CalendarDay {
+  id: number | string;
+  date: Date | undefined;
+  description: string;
+}
 interface CalendarDialogProps {
   isOpen: boolean;
   onClose: () => void;

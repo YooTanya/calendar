@@ -3,26 +3,16 @@ import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import clsx from "clsx";
-import {
-  format,
-  getDay,
-  getDaysInMonth,
-  setDate,
-  startOfMonth
-} from "date-fns/esm";
+import { format } from "date-fns/esm";
 import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import CalendarDialog from "./CalendarDialog";
-import { getDate } from "date-fns";
+import CalendarDay from "../types/CalendarDay";
 
 interface CalendarContentProps {
   currentDate: Date;
+  dates: CalendarDay[];
 }
 
-interface CalendarDay {
-  id: number | string;
-  date: Date | undefined;
-  description: string;
-}
 const useStyles = makeStyles(theme => ({
   button: {
     width: "100%",
@@ -103,16 +93,14 @@ const useStyles = makeStyles(theme => ({
 
 const CalendarContent: FC<CalendarContentProps> = props => {
   const classes = useStyles();
-  const { currentDate } = props;
-  const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(currentDate));
+  const { currentDate, dates } = props;
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const [dates, setDates] = useState<CalendarDay[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
   const [selectedDateDescription, setSelectedDateDescription] = useState<
     string
   >("");
+  const [currentDates, setCurrentDates] = useState<CalendarDay[]>(dates);
   const [dayDiv, setDayDiv] = useState<ReactNode[]>([]);
-  const [marks, setMarks] = useState<any[]>([]);
 
   const handleOpenDialog = useCallback((currentDate, date, description) => {
     if (!!date) {
@@ -130,60 +118,22 @@ const CalendarContent: FC<CalendarContentProps> = props => {
     updatedData: Pick<CalendarDay, "date" | "description">
   ) => {
     setIsOpenDialog(false);
-    console.log(updatedData);
-    const { date } = updatedData;
-    let returnValue: CalendarDay[] = [];
+    let newCalendarDates: CalendarDay[] = [];
 
-    if (!!date) {
-      dates.map(date => {
-        returnValue = { ...dates };
+    if (!!updatedData.description) {
+      newCalendarDates = dates.map(eachDate => {
+        if (eachDate.date === updatedData.date) {
+          eachDate.description = updatedData.description;
+        }
 
-        // if (dates.date === date) {
-        //   returnValue.description = description;
-        // }
-
-        return returnValue;
+        return eachDate;
       });
-
-      // setSelectedIds(updatedIds);
     }
+    setCurrentDates(newCalendarDates);
   };
 
-  useEffect(() => {
-    setDaysInMonth(getDaysInMonth(currentDate));
-  }, [currentDate]);
-
-  const createDaysInMonth = () => {
-    let blanks: CalendarDay[] = [];
-    let values: CalendarDay[] = [];
-    const startedDay = getDay(startOfMonth(currentDate));
-    for (let counter = 1; counter < startedDay; counter++) {
-      blanks.push({
-        id: `blank-${counter}`,
-        date: undefined,
-        description: ""
-      });
-    }
-
-    for (let counter = 1; counter <= daysInMonth; counter++) {
-      let description = "";
-      if (counter === 25 || counter === 26 || counter === 27) {
-        description = "Chinese new year";
-      }
-      if (counter === 1 || counter === 31) {
-        description = "New year";
-      }
-      values.push({
-        id: counter,
-        date: setDate(currentDate, counter),
-        description: description
-      });
-    }
-    return [...blanks, ...values];
-  };
-
-  const createDayElement = () => {
-    return createDaysInMonth().map(values => {
+  const createDayElement = useCallback(() => {
+    return dates.map(values => {
       const { id, date, description } = values;
       return (
         <div
@@ -210,12 +160,12 @@ const CalendarContent: FC<CalendarContentProps> = props => {
         </div>
       );
     });
-  };
+  }, [currentDate, currentDates]);
 
   useEffect(() => {
-    setDates(createDaysInMonth());
+    setCurrentDates(dates);
     setDayDiv(createDayElement());
-  }, [currentDate]);
+  }, [dates, createDayElement]);
 
   const arrangeDays = () => {
     let rows: ReactNode[] = [];

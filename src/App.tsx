@@ -12,11 +12,16 @@ import {
   getMonth,
   getYear,
   startOfYear,
-  subMonths
+  subMonths,
+  startOfMonth,
+  getDay,
+  getDaysInMonth,
+  setDate
 } from "date-fns/esm";
 import startOfToday from "date-fns/esm/startOfToday";
 import React, { FC, useCallback, useEffect, useState } from "react";
 import CalendarContent from "./components/CalendarContent";
+import CalendarDay from "./types/CalendarDay";
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -31,6 +36,8 @@ const App: FC = () => {
   const [disabledPrevIcon, setDisabledPrevIcon] = useState(false);
   const [disabledNextIcon, setDisabledNextIcon] = useState(false);
   const [currentDate, setCurrentDate] = useState(startOfToday());
+  const [daysInMonth, setDaysInMonth] = useState(getDaysInMonth(currentDate));
+  const [dates, setDates] = useState<CalendarDay[]>([]);
 
   const displayIcons = useCallback(() => {
     const firstMonth = startOfYear(startOfToday()).getMonth();
@@ -53,6 +60,40 @@ const App: FC = () => {
   useEffect(() => {
     displayIcons();
   }, [displayIcons]);
+
+  const createDaysInMonth = useCallback(() => {
+    let blanks: CalendarDay[] = [];
+    let values: CalendarDay[] = [];
+    const startedDay = getDay(startOfMonth(currentDate));
+    for (let counter = 1; counter < startedDay; counter++) {
+      blanks.push({
+        id: `blank-${counter}`,
+        date: undefined,
+        description: ""
+      });
+    }
+
+    for (let counter = 1; counter <= daysInMonth; counter++) {
+      let description = "";
+      if (counter === 25 || counter === 26 || counter === 27) {
+        description = "Chinese new year";
+      }
+      if (counter === 1 || counter === 31) {
+        description = "New year";
+      }
+      values.push({
+        id: counter,
+        date: setDate(currentDate, counter),
+        description: description
+      });
+    }
+    return [...blanks, ...values];
+  }, [currentDate, daysInMonth]);
+
+  useEffect(() => {
+    setDaysInMonth(getDaysInMonth(currentDate));
+    setDates(createDaysInMonth());
+  }, [currentDate, createDaysInMonth]);
 
   return (
     <div>
@@ -77,7 +118,7 @@ const App: FC = () => {
           <KeyboardArrowRightIcon fontSize="small" />
         </IconButton>
       </AppBar>
-      <CalendarContent currentDate={currentDate} />
+      <CalendarContent currentDate={currentDate} dates={dates} />
       <Hidden smUp>
         <AppBar className={classes.header} position="static">
           <IconButton
