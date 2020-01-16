@@ -1,13 +1,15 @@
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
+import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
+import Zoom from "@material-ui/core/Zoom";
 import clsx from "clsx";
+import { isSameDay } from "date-fns";
 import { format } from "date-fns/esm";
 import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import CalendarDay from "../types/CalendarDay";
 import CalendarDialog from "./CalendarDialog";
-import Tooltip from "@material-ui/core/Tooltip";
 
 interface CalendarContentProps {
   currentDate: Date;
@@ -110,8 +112,9 @@ const CalendarContent: FC<CalendarContentProps> = props => {
   >("");
   const [currentDates, setCurrentDates] = useState<CalendarDay[]>(dates);
   const [dayDiv, setDayDiv] = useState<ReactNode[]>([]);
+  const [datesWithDescription, setDatesWithDescription] = useState<any[]>([]);
 
-  const handleOpenDialog = useCallback((currentDate, date, description) => {
+  const handleOpenDialog = useCallback((date, description) => {
     if (!!date) {
       setIsOpenDialog(true);
       setSelectedDateDescription(description);
@@ -134,17 +137,22 @@ const CalendarContent: FC<CalendarContentProps> = props => {
         if (eachDate.date === updatedData.date) {
           eachDate.description = updatedData.description;
         }
-
         return eachDate;
       });
     }
     setCurrentDates(newCalendarDates);
+    setDatesWithDescription([...datesWithDescription, { ...updatedData }]);
   };
 
   const createDayElement = useCallback(() => {
-    return dates.map(values => {
-      const { id, date, description } = values;
-
+    return dates.map((values, index) => {
+      const { id, date } = values;
+      let { description } = values;
+      for (let index = 0; index < datesWithDescription.length; index++) {
+        if (!!date && isSameDay(date, datesWithDescription[index].date)) {
+          description = datesWithDescription[index].description;
+        }
+      }
       return (
         <div
           key={id}
@@ -155,12 +163,13 @@ const CalendarContent: FC<CalendarContentProps> = props => {
             },
             { [classes.mark]: !!description }
           )}
-          onClick={() => handleOpenDialog(currentDate, date, description)}
+          onClick={() => handleOpenDialog(date, description)}
         >
           <Tooltip
             title={description}
             placement="right"
             classes={{ tooltip: classes.tooltip }}
+            TransitionComponent={Zoom}
           >
             <ButtonBase
               disabled={date === undefined}
@@ -180,7 +189,7 @@ const CalendarContent: FC<CalendarContentProps> = props => {
         </div>
       );
     });
-  }, [currentDate, currentDates]);
+  }, [currentDate, currentDates, datesWithDescription]);
 
   useEffect(() => {
     setCurrentDates(dates);

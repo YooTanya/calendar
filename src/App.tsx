@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "space-between"
   }
 }));
-const App: FC = () => {
+const App: FC = props => {
   const classes = useStyles();
   const [disabledPrevIcon, setDisabledPrevIcon] = useState(false);
   const [disabledNextIcon, setDisabledNextIcon] = useState(false);
@@ -72,15 +72,14 @@ const App: FC = () => {
         description: ""
       });
     }
-
     for (let counter = 1; counter <= daysInMonth; counter++) {
-      let description = "";
       values.push({
         id: counter,
         date: setDate(currentDate, counter),
-        description: description
+        description: ""
       });
     }
+
     return [...blanks, ...values];
   }, [currentDate, daysInMonth]);
 
