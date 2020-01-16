@@ -4,21 +4,31 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
-import React, { FC } from "react";
 import { format } from "date-fns";
+import React, { ChangeEventHandler, FC, useState } from "react";
 
 interface CalendarDialogProps {
   isOpen: boolean;
-  closeDialog: () => void;
-  title: Date;
+  onClose: () => void;
+  onSave: (data: { date: Date; description: string }) => void;
+  selectedDate: Date;
+  description: string;
 }
 
 const CalendarDialog: FC<CalendarDialogProps> = props => {
-  const { isOpen, closeDialog, title } = props;
+  const { isOpen, description, onClose, onSave, selectedDate } = props;
+  const [currentDescription, setCurrentDescription] = useState<string>(
+    description
+  );
+
+  const updateDescription: ChangeEventHandler<HTMLInputElement> = event => {
+    setCurrentDescription(event.target.value);
+  };
+
   return (
     <Dialog open={isOpen} fullWidth>
       <DialogTitle id="form-dialog-title">
-        {format(title, "d MMMM Y")}
+        {format(selectedDate, "d MMMM Y")}
       </DialogTitle>
       <DialogContent>
         <TextField
@@ -27,13 +37,21 @@ const CalendarDialog: FC<CalendarDialogProps> = props => {
           label="Description"
           type="text"
           fullWidth
+          defaultValue={description}
+          onChange={updateDescription}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={closeDialog} color="primary">
+        <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={closeDialog} color="primary" variant="contained">
+        <Button
+          onClick={() => {
+            onSave({ date: selectedDate, description: currentDescription });
+          }}
+          color="primary"
+          variant="contained"
+        >
           Save
         </Button>
       </DialogActions>
