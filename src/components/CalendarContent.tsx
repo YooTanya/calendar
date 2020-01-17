@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     }
   },
   cell: {
+    "& :hover": {
+      backgroundColor: theme.palette.action.hover
+    },
     [theme.breakpoints.up("xs")]: {
       display: "flex",
       justifyContent: "center",
