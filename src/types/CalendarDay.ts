@@ -1,6 +1,6 @@
 interface CalendarDay {
   id: number | string;
-  date: Date | undefined;
+  date?: Date;
   description: string;
 }
 

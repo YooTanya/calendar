@@ -29,6 +29,9 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  icon: {
+    color: theme.palette.common.white
   }
 }));
 const App: FC = () => {
@@ -68,7 +71,6 @@ const App: FC = () => {
     for (let counter = 1; counter < startedDay; counter++) {
       blanks.push({
         id: `blank-${counter}`,
-        date: undefined,
         description: ""
       });
     }
@@ -92,6 +94,7 @@ const App: FC = () => {
     <div>
       <AppBar className={classes.header} position="static">
         <IconButton
+          className={classes.icon}
           disabled={disabledPrevIcon}
           onClick={() => {
             setCurrentDate(subMonths(currentDate, 1));
@@ -103,6 +106,7 @@ const App: FC = () => {
           {`${format(currentDate, "MMMM")} ${getYear(currentDate)}`}
         </Typography>
         <IconButton
+          className={classes.icon}
           disabled={disabledNextIcon}
           onClick={() => {
             setCurrentDate(addMonths(currentDate, 1));

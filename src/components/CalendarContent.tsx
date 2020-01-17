@@ -113,7 +113,10 @@ const CalendarContent: FC<CalendarContentProps> = props => {
   >("");
   const [currentDates, setCurrentDates] = useState<CalendarDay[]>(dates);
   const [dayDiv, setDayDiv] = useState<ReactNode[]>([]);
-  const [datesWithDescription, setDatesWithDescription] = useState<any[]>([]);
+  // const [datesWithDescription, setDatesWithDescription] = useState<any[]>([]);
+  const [datesWithDescription, setDatesWithDescription] = useState<
+    Pick<CalendarDay, "date" | "description">[]
+  >([]);
 
   const handleOpenDialog = useCallback((date, description) => {
     if (!!date) {
@@ -146,14 +149,16 @@ const CalendarContent: FC<CalendarContentProps> = props => {
   };
 
   const createDayElement = useCallback(() => {
-    return dates.map((values, index) => {
+    return dates.map(values => {
       const { id, date } = values;
       let { description } = values;
-      for (let index = 0; index < datesWithDescription.length; index++) {
-        if (!!date && isSameDay(date, datesWithDescription[index].date)) {
-          description = datesWithDescription[index].description;
+
+      datesWithDescription.map(eachDay => {
+        if (!!date && eachDay.date && isSameDay(date, eachDay.date as Date)) {
+          description = eachDay.description;
         }
-      }
+      });
+
       return (
         <div
           key={id}
@@ -233,13 +238,13 @@ const CalendarContent: FC<CalendarContentProps> = props => {
         </div>
       );
     }
-    return days;
+    return <div className={classes.row}>{days}</div>;
   };
 
   return (
     <>
       <Paper square>
-        <div className={classes.row}>{renderWeek()}</div>
+        {renderWeek()}
         {arrangeDays()}
       </Paper>
       <CalendarDialog
