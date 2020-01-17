@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
     },
     [theme.breakpoints.down("xs")]: {
       display: "inline-block",
-      marginLeft: "3rem",
+      marginLeft: "2rem",
       width: "100%",
       textAlign: "left"
     }
@@ -100,6 +100,9 @@ const useStyles = makeStyles(theme => ({
   text: {
     "&:hover": {
       backgroundColor: "transparent"
+    },
+    [theme.breakpoints.down("xs")]: {
+      minWidth: "2rem"
     }
   },
   tooltip: {
