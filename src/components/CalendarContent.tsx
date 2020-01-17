@@ -22,11 +22,11 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down("xs")]: {
       display: "flex",
       justifyContent: "flex-start",
-      marginLeft: theme.spacing(2)
+      paddingLeft: theme.spacing(2)
     }
   },
   cell: {
-    "& :hover": {
+    "&:hover": {
       backgroundColor: theme.palette.action.hover
     },
     [theme.breakpoints.up("xs")]: {
@@ -95,6 +95,11 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up("sm")]: {
       display: "flex",
       flexFlow: "row"
+    }
+  },
+  text: {
+    "&:hover": {
+      backgroundColor: "transparent"
     }
   },
   tooltip: {
@@ -184,12 +189,15 @@ const CalendarContent: FC<CalendarContentProps> = props => {
               disabled={date === undefined}
               className={classes.button}
             >
-              <Typography variant="body2">
+              <Typography variant="body2" className={classes.text}>
                 {!!date && format(date, "d")}
               </Typography>
 
               {description && (
-                <Typography variant="body2" className={classes.description}>
+                <Typography
+                  variant="body2"
+                  className={clsx(classes.text, classes.description)}
+                >
                   {description}
                 </Typography>
               )}
