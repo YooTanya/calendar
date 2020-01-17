@@ -37,6 +37,9 @@ const CalendarDialog: FC<CalendarDialogProps> = props => {
       <DialogContent>
         <TextField
           autoFocus
+          inputProps={{
+            maxLength: 40
+          }}
           margin="dense"
           label="Description"
           type="text"
