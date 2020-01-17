@@ -132,6 +132,7 @@ const App: FC = () => {
             {`${format(currentDate, "MMMM")} ${getYear(currentDate)}`}
           </Typography>
           <IconButton
+            className={classes.icon}
             disabled={disabledNextIcon}
             onClick={() => {
               setCurrentDate(addMonths(currentDate, 1));
