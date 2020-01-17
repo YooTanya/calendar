@@ -119,6 +119,7 @@ const App: FC = () => {
       <Hidden smUp>
         <AppBar className={classes.header} position="static">
           <IconButton
+            className={classes.icon}
             disabled={disabledPrevIcon}
             onClick={() => {
               setCurrentDate(subMonths(currentDate, 1));
